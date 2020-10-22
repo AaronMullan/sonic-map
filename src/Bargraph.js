@@ -5,7 +5,39 @@ import { Bar } from '@visx/shape';
 import { scaleLinear, scaleBand } from '@visx/scale';
 
 // We'll use some mock data from `@visx/mock-data` for this.
-const data = letterFrequency;
+// const data = letterFrequency;
+const demoPercentage = [
+  // {
+  //   "name": "Stadia",
+  //   "url": "http://twitter.com/search?q=Stadia",
+  //   "usaPercentage" : 0.005353113204683215,
+  //   "mesaPercentage" : 0.00345543938054644,
+  //   "portlandPercentage" : 0.00541385751631853,
+  // },
+  // {
+  //   "name": "radia",
+  //   "url": "http://twitter.com/search?q=Stadia",
+  //   "usaPercentage" : 0.003353113204683215,
+  //   "mesaPercentage" : 0.00345543938054644,
+  //   "portlandPercentage" : 0.00541385751631853,
+  // },
+  { "name": 'Buhari_Portland', 
+    "url": 'http://twitter.com/search?q=Buhari', 
+    "promoted_content": null, 
+    "query": 'Buhari', 
+    "tweet_volume": 1062669, 
+    "location": 'Portland', 
+    "percentage": 0.30977485208963473 }, 
+
+    {"name": 'Buhari_Mesa', 
+    "url": 'http://twitter.com/search?q=Buhari', 
+    "promoted_content": null, 
+    "query": 'Buhari', 
+    "tweet_volume": 1062669, 
+    "location": 'Mesa', 
+    "percentage": 0.40977485208963473 },
+]
+const data = demoPercentage;
 
 // Define the graph dimensions and margins
 const width = 500;
@@ -17,8 +49,8 @@ const xMax = width - margin.left - margin.right;
 const yMax = height - margin.top - margin.bottom;
 
 // We'll make some helpers to get at the data we want
-const x = d => d.letter;
-const y = d => +d.frequency * 100;
+const x = d => d.name;
+const y = d => +d.percentage;
 
 // And then scale the graph by our data
 const xScale = scaleBand({
