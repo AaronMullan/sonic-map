@@ -1,3 +1,28 @@
+export interface TwitterPercentage {
+    name: string,
+    url: string,
+    usaPercentage: number,
+    mesaPercentage: number,
+    portlandPercentage: number
+}
+
+export const demoPercentage: TwitterPercentage [] = [
+    {
+      "name": "Stadia",
+      "url": "http://twitter.com/search?q=Stadia",
+      "usaPercentage" : 0.5353113204683215,
+      "mesaPercentage" : 0.345543938054644,
+      "portlandPercentage" : 0.541385751631853,
+    },
+    {
+      "name": "radia",
+      "url": "http://twitter.com/search?q=Stadia",
+      "usaPercentage" : 0.3353113204683215,
+      "mesaPercentage" : 0.245543938054644,
+      "portlandPercentage" : 0.641385751631853,
+    }
+];
+
 export const portlandData = [
     {
         "trends": [

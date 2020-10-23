@@ -21,7 +21,7 @@ const demoPercentage = [
   //   "mesaPercentage" : 0.00345543938054644,
   //   "portlandPercentage" : 0.00541385751631853,
   // },
-  { "name": 'Buhari_Portland', 
+  { "name": 'Buhari', 
     "url": 'http://twitter.com/search?q=Buhari', 
     "promoted_content": null, 
     "query": 'Buhari', 
@@ -29,7 +29,7 @@ const demoPercentage = [
     "location": 'Portland', 
     "percentage": 0.30977485208963473 }, 
 
-    {"name": 'Buhari_Mesa', 
+    {"name": 'Buhari', 
     "url": 'http://twitter.com/search?q=Buhari', 
     "promoted_content": null, 
     "query": 'Buhari', 

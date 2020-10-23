@@ -22,20 +22,20 @@ export type BarGroupProps<
   Key extends GroupKey = GroupKey,
   X0Scale extends AnyScaleBand = AnyScaleBand,
   X1Scale extends AnyScaleBand = AnyScaleBand
-> = BaseBarGroupProps<Datum, Key> & {
-  /** Returns the value mapped to the x0 (group position) of a bar */
-  x0: Accessor<Datum, ScaleInput<X0Scale>>;
-  /** @visx/scale or d3-scale that takes an x0 value (position of group) and maps it to an x0 axis position of the group. */
-  x0Scale: X0Scale;
-  /** @visx/scale or d3-scale that takes a group key and maps it to an x axis position (within a group). */
-  x1Scale: X1Scale;
-  /** @visx/scale or d3-scale that takes an y value (Datum[key]) and maps it to a y axis position. */
-  yScale: PositionScale;
-  /** Total height of the y-axis. */
-  height: number;
-  /** Override render function which is passed the computed BarGroups. */
-  children?: (barGroups: BarGroup<Key>[]) => React.ReactNode;
-};
+  > = BaseBarGroupProps<Datum, Key> & {
+    /** Returns the value mapped to the x0 (group position) of a bar */
+    x0: Accessor<Datum, ScaleInput<X0Scale>>;
+    /** @visx/scale or d3-scale that takes an x0 value (position of group) and maps it to an x0 axis position of the group. */
+    x0Scale: X0Scale;
+    /** @visx/scale or d3-scale that takes a group key and maps it to an x axis position (within a group). */
+    x1Scale: X1Scale;
+    /** @visx/scale or d3-scale that takes an y value (Datum[key]) and maps it to a y axis position. */
+    yScale: PositionScale;
+    /** Total height of the y-axis. */
+    height: number;
+    /** Override render function which is passed the computed BarGroups. */
+    children?: (barGroups: BarGroup<Key>[]) => React.ReactNode;
+  };
 
 /**
  * Generates bar groups as an array of objects and renders `<rect />`s for each datum grouped by `key`. A general setup might look like this:

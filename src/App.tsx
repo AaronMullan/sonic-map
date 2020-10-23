@@ -9,7 +9,7 @@ function App() {
   <div className={"container"}>
     <ParentSize>{({ width, height }) => 
       <TwitterBar width={width} height={height}/>}
-    </ParentSize>,
+    </ParentSize>
   </div>
  </div>
   );
