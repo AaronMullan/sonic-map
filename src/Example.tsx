@@ -1,212 +1,119 @@
-import React, { useMemo, useCallback } from 'react';
-import { AreaClosed, Line, Bar } from '@visx/shape';
-import appleStock, { AppleStock } from '@visx/mock-data/lib/mocks/appleStock';
-import { curveMonotoneX } from '@visx/curve';
-import { GridRows, GridColumns } from '@visx/grid';
-import { scaleTime, scaleLinear } from '@visx/scale';
-import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
-import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
-import { localPoint } from '@visx/event';
-import { LinearGradient } from '@visx/gradient';
-import { max, extent, bisector } from 'd3-array';
-import { timeFormat } from 'd3-time-format';
+import React from 'react';
+import { Group } from '@visx/group';
+import { BarGroup } from '@visx/shape';
+import { AxisBottom } from '@visx/axis';
+import cityTemperature, { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
+import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
+import { timeParse, timeFormat } from 'd3-time-format';
 
-type TooltipData = AppleStock;
-
-const stock = appleStock.slice(1000);
-export const background = 'green';
-export const background2 = 'red';
-export const accentColor = 'blue';
-export const accentColorDark = 'white';
-const tooltipStyles = {
-  ...defaultStyles,
-  background,
-  border: '1px solid red',
-  color: 'white',
-};
-
-// util
-const formatDate = timeFormat("%b %d, '%y");
-
-// accessors
-const getDate = (d: AppleStock) => new Date(d.date);
-const getStockValue = (d: AppleStock) => d.close;
-const bisectDate = bisector<AppleStock, Date>(d => new Date(d.date)).left;
-
-export type AreaProps = {
+export type BarGroupProps = {
   width: number;
   height: number;
   margin?: { top: number; right: number; bottom: number; left: number };
+  events?: boolean;
 };
 
-export default withTooltip<AreaProps, TooltipData>(
-  ({
-    width,
-    height,
-    margin = { top: 0, right: 0, bottom: 0, left: 0 },
-    showTooltip,
-    hideTooltip,
-    tooltipData,
-    tooltipTop = 0,
-    tooltipLeft = 0,
-  }: AreaProps & WithTooltipProvidedProps<TooltipData>) => {
-    if (width < 10) return null;
+type CityName = 'New York' | 'San Francisco' | 'Austin';
 
-    // bounds
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+const blue = '#aeeef8';
+export const green = '#e5fd3d';
+const purple = '#9caff6';
+export const background = '#612efb';
 
-    // scales
-    const dateScale = useMemo(
-      () =>
-        scaleTime({
-          range: [margin.left, innerWidth + margin.left],
-          domain: extent(stock, getDate) as [Date, Date],
-        }),
-      [innerWidth, margin.left],
-    );
-    const stockValueScale = useMemo(
-      () =>
-        scaleLinear({
-          range: [innerHeight + margin.top, margin.top],
-          domain: [0, (max(stock, getStockValue) || 0) + innerHeight / 3],
-          nice: true,
-        }),
-      [margin.top, innerHeight],
-    );
+const data = cityTemperature.slice(0, 8);
+const keys = Object.keys(data[0]).filter(d => d !== 'date') as CityName[];
+const defaultMargin = { top: 40, right: 0, bottom: 40, left: 0 };
 
-    // tooltip handler
-    const handleTooltip = useCallback(
-      (event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>) => {
-        const { x } = localPoint(event) || { x: 0 };
-        const x0 = dateScale.invert(x);
-        const index = bisectDate(stock, x0, 1);
-        const d0 = stock[index - 1];
-        const d1 = stock[index];
-        let d = d0;
-        if (d1 && getDate(d1)) {
-          d = x0.valueOf() - getDate(d0).valueOf() > getDate(d1).valueOf() - x0.valueOf() ? d1 : d0;
-        }
-        showTooltip({
-          tooltipData: d,
-          tooltipLeft: x,
-          tooltipTop: stockValueScale(getStockValue(d)),
-        });
-      },
-      [showTooltip, stockValueScale, dateScale],
-    );
+const parseDate = timeParse('%Y-%m-%d');
+const format = timeFormat('%b %d');
+const formatDate = (date: string) => format(parseDate(date) as Date);
 
-    return (
-      <div>
-        <svg width={width} height={height}>
-          <rect
-            x={0}
-            y={0}
-            width={width}
-            height={height}
-            fill="url(#area-background-gradient)"
-            rx={14}
-          />
-          <LinearGradient id="area-background-gradient" from={background} to={background2} />
-          <LinearGradient id="area-gradient" from={accentColor} to={accentColor} toOpacity={0.1} />
-          <GridRows
-            left={margin.left}
-            scale={stockValueScale}
-            width={innerWidth}
-            strokeDasharray="3,3"
-            stroke={accentColor}
-            strokeOpacity={0.3}
-            pointerEvents="none"
-          />
-          <GridColumns
-            top={margin.top}
-            scale={dateScale}
-            height={innerHeight}
-            strokeDasharray="3,3"
-            stroke={accentColor}
-            strokeOpacity={0.3}
-            pointerEvents="none"
-          />
-          <AreaClosed<AppleStock>
-            data={stock}
-            x={d => dateScale(getDate(d)) ?? 0}
-            y={d => stockValueScale(getStockValue(d)) ?? 0}
-            yScale={stockValueScale}
-            strokeWidth={1}
-            stroke="url(#area-gradient)"
-            fill="url(#area-gradient)"
-            curve={curveMonotoneX}
-          />
-          <Bar
-            x={margin.left}
-            y={margin.top}
-            width={innerWidth}
-            height={innerHeight}
-            fill="transparent"
-            rx={14}
-            onTouchStart={handleTooltip}
-            onTouchMove={handleTooltip}
-            onMouseMove={handleTooltip}
-            onMouseLeave={() => hideTooltip()}
-          />
-          {tooltipData && (
-            <g>
-              <Line
-                from={{ x: tooltipLeft, y: margin.top }}
-                to={{ x: tooltipLeft, y: innerHeight + margin.top }}
-                stroke={accentColorDark}
-                strokeWidth={2}
-                pointerEvents="none"
-                strokeDasharray="5,2"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipTop + 1}
-                r={4}
-                fill="black"
-                fillOpacity={0.1}
-                stroke="black"
-                strokeOpacity={0.1}
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipTop}
-                r={4}
-                fill={accentColorDark}
-                stroke="white"
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-            </g>
-          )}
-        </svg>
-        {tooltipData && (
-          <div>
-            <TooltipWithBounds
-              key={Math.random()}
-              top={tooltipTop - 12}
-              left={tooltipLeft + 12}
-              style={tooltipStyles}
-            >
-              {`$${getStockValue(tooltipData)}`}
-            </TooltipWithBounds>
-            <Tooltip
-              top={innerHeight + margin.top - 14}
-              left={tooltipLeft}
-              style={{
-                ...defaultStyles,
-                minWidth: 72,
-                textAlign: 'center',
-                transform: 'translateX(-50%)',
-              }}
-            >
-              {formatDate(getDate(tooltipData))}
-            </Tooltip>
-          </div>
-        )}
-      </div>
-    );
-  },
-);
+// accessors
+const getDate = (d: CityTemperature) => d.date;
+
+// scales
+const dateScale = scaleBand<string>({
+  domain: data.map(getDate),
+  padding: 0.2,
+});
+const cityScale = scaleBand<string>({
+  domain: keys,
+  padding: 0.1,
+});
+const tempScale = scaleLinear<number>({
+  domain: [0, Math.max(...data.map(d => Math.max(...keys.map(key => Number(d[key])))))],
+});
+const colorScale = scaleOrdinal<string, string>({
+  domain: keys,
+  range: [blue, green, purple],
+});
+
+export default function Example({
+  width,
+  height,
+  events = false,
+  margin = defaultMargin,
+}: BarGroupProps) {
+  // bounds
+  const xMax = width - margin.left - margin.right;
+  const yMax = height - margin.top - margin.bottom;
+
+  // update scale output dimensions
+  dateScale.rangeRound([0, xMax]);
+  cityScale.rangeRound([0, dateScale.bandwidth()]);
+  tempScale.range([yMax, 0]);
+
+  return width < 10 ? null : (
+    <svg width={width} height={height}>
+      <rect x={0} y={0} width={width} height={height} fill={background} rx={14} />
+      <Group top={margin.top} left={margin.left}>
+        <BarGroup
+          data={data}
+          keys={keys}
+          height={yMax}
+          x0={getDate}
+          x0Scale={dateScale}
+          x1Scale={cityScale}
+          yScale={tempScale}
+          color={colorScale}
+        >
+          {barGroups =>
+            barGroups.map(barGroup => (
+              <Group key={`bar-group-${barGroup.index}-${barGroup.x0}`} left={barGroup.x0}>
+                {barGroup.bars.map(bar => (
+                  <rect
+                    key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
+                    x={bar.x}
+                    y={bar.y}
+                    width={bar.width}
+                    height={bar.height}
+                    fill={bar.color}
+                    rx={4}
+                    onClick={() => {
+                      if (!events) return;
+                      const { key, value } = bar;
+                      alert(JSON.stringify({ key, value }));
+                    }}
+                  />
+                ))}
+              </Group>
+            ))
+          }
+        </BarGroup>
+      </Group>
+      <AxisBottom
+        top={yMax + margin.top}
+        tickFormat={formatDate}
+        scale={dateScale}
+        stroke={green}
+        tickStroke={green}
+        hideAxisLine
+        tickLabelProps={() => ({
+          fill: green,
+          fontSize: 11,
+          textAnchor: 'middle',
+        })}
+      />
+    </svg>
+  );
+}

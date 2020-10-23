@@ -3,16 +3,18 @@ import cx from 'classnames';
 import { Group } from '@visx/group';
 import { ScaleInput } from '@visx/scale';
 import Bar from './Bar';
+import { Accessor } from '../types/accessor'
+import {
+  BaseBarGroupProps,
+  BarGroup,
+  GroupKey
+} from '../types/barGroup';
 import {
   PositionScale,
   DatumObject,
   AnyScaleBand,
   AddSVGProps,
-  BaseBarGroupProps,
-  BarGroup,
-  GroupKey,
-  Accessor,
-} from '../types';
+} from '../types/base'
 import getBandwidth from '../util/getBandwidth';
 
 export type BarGroupProps<
@@ -20,20 +22,20 @@ export type BarGroupProps<
   Key extends GroupKey = GroupKey,
   X0Scale extends AnyScaleBand = AnyScaleBand,
   X1Scale extends AnyScaleBand = AnyScaleBand
-  > = BaseBarGroupProps<Datum, Key> & {
-    /** Returns the value mapped to the x0 (group position) of a bar */
-    x0: Accessor<Datum, ScaleInput<X0Scale>>;
-    /** @visx/scale or d3-scale that takes an x0 value (position of group) and maps it to an x0 axis position of the group. */
-    x0Scale: X0Scale;
-    /** @visx/scale or d3-scale that takes a group key and maps it to an x axis position (within a group). */
-    x1Scale: X1Scale;
-    /** @visx/scale or d3-scale that takes an y value (Datum[key]) and maps it to a y axis position. */
-    yScale: PositionScale;
-    /** Total height of the y-axis. */
-    height: number;
-    /** Override render function which is passed the computed BarGroups. */
-    children?: (barGroups: BarGroup<Key>[]) => React.ReactNode;
-  };
+> = BaseBarGroupProps<Datum, Key> & {
+  /** Returns the value mapped to the x0 (group position) of a bar */
+  x0: Accessor<Datum, ScaleInput<X0Scale>>;
+  /** @visx/scale or d3-scale that takes an x0 value (position of group) and maps it to an x0 axis position of the group. */
+  x0Scale: X0Scale;
+  /** @visx/scale or d3-scale that takes a group key and maps it to an x axis position (within a group). */
+  x1Scale: X1Scale;
+  /** @visx/scale or d3-scale that takes an y value (Datum[key]) and maps it to a y axis position. */
+  yScale: PositionScale;
+  /** Total height of the y-axis. */
+  height: number;
+  /** Override render function which is passed the computed BarGroups. */
+  children?: (barGroups: BarGroup<Key>[]) => React.ReactNode;
+};
 
 /**
  * Generates bar groups as an array of objects and renders `<rect />`s for each datum grouped by `key`. A general setup might look like this:
@@ -114,13 +116,25 @@ export default function BarGroupComponent<
   }));
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
-  if (children) return <>{ children(barGroups) } < />;
+  if (children) return <>{children(barGroups)}</>;
 
   return (
-    <Group className= { cx('visx-bar-group', className) }          ))
-}
-</Group>
+    <Group className={cx('visx-bar-group', className)} top={top} left={left}>
+      {barGroups.map(barGroup => (
+        <Group key={`bar-group-${barGroup.index}-${barGroup.x0}`} left={barGroup.x0}>
+          {barGroup.bars.map(bar => (
+            <Bar
+              key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
+              x={bar.x}
+              y={bar.y}
+              width={bar.width}
+              height={bar.height}
+              fill={bar.color}
+              {...restProps}
+            />
+          ))}
+        </Group>
       ))}
-</Group>
+    </Group>
   );
 }

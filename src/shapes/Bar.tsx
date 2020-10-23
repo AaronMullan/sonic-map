@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import { AddSVGProps } from '../types';
+import { AddSVGProps } from '../types/base';
 
 export type BarProps = {
   /** className to apply to rect element. */
@@ -14,5 +14,7 @@ export default function Bar({
   innerRef,
   ...restProps
 }: AddSVGProps<BarProps, SVGRectElement>) {
-  return <rect ref={ } className = { cx('visx-bar', className) } {...restProps } />;
+  return <rect 
+  // ref={ } 
+  className = { cx('visx-bar', className) } {...restProps } />;
 }
