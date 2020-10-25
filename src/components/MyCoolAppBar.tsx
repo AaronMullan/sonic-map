@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ButtonAppBar() {
+export default function MyCoolAppBar() {
   const classes = useStyles();
 
   return (
