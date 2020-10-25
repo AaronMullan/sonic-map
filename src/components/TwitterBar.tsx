@@ -3,7 +3,7 @@ import BarGroup from '../shapes/BarGroup';
 import { Group } from '@visx/group';
 import { AxisBottom } from '@visx/axis';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
-import { demoPercentage, TwitterPercentage, portlandData, mesaData, usaData } from '../util/sampledata'
+import { TwitterPercentage, portlandData, mesaData, usaData } from '../util/sampledata'
 import dataMunger from '../util/dataMunger';
 
 export type BarGroupProps = {

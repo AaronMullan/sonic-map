@@ -1,92 +1,75 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Dialog from '@material-ui/core/Dialog';
-import PersonIcon from '@material-ui/icons/Person';
-import AddIcon from '@material-ui/icons/Add';
-import Typography from '@material-ui/core/Typography';
-import { blue } from '@material-ui/core/colors';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+import IconButton from '@material-ui/core/IconButton';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
-const emails = ['username@gmail.com', 'user02@gmail.com'];
-const useStyles = makeStyles({
-  avatar: {
-    backgroundColor: blue[100],
-    color: blue[600],
-  },
-});
+// function getModalStyle() {
+//   const top = 50;
+//   const left = 50;
 
-export interface SimpleDialogProps {
-  open: boolean;
-  selectedValue: string;
-  onClose: (value: string) => void;
-}
+//   return {
+//     top: `${top}%`,
+//     left: `${left}%`,
+//     transform: `translate(-${top}%, -${left}%)`,
+//   };
+// }
 
-function SimpleDialog(props: SimpleDialogProps) {
-  const classes = useStyles();
-  const { onClose, selectedValue, open } = props;
+// const useStyles = makeStyles((theme: Theme) =>
+//   createStyles({
+//     paper: {
+//       position: 'absolute',
+//       width: 400,
+//       backgroundColor: theme.palette.background.paper,
+//       border: '2px solid #000',
+//       boxShadow: theme.shadows[5],
+//       padding: theme.spacing(2, 4, 3),
+//     },
+//   }),
+// );
 
-  const handleClose = () => {
-    onClose(selectedValue);
-  };
-
-  const handleListItemClick = (value: string) => {
-    onClose(value);
-  };
-
-  return (
-    <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
-      <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
-      <List>
-        {emails.map((email) => (
-          <ListItem button onClick={() => handleListItemClick(email)} key={email}>
-            <ListItemAvatar>
-              <Avatar className={classes.avatar}>
-                <PersonIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={email} />
-          </ListItem>
-        ))}
-        <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
-          <ListItemAvatar>
-            <Avatar>
-              <AddIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary="Add account" />
-        </ListItem>
-      </List>
-    </Dialog>
-  );
-}
-
-export default function InfoDialog() {
+export default function SimpleModal() {
+  // const classes = useStyles();
+  // const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
 
-  const handleClickOpen = () => {
+  const handleOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (value: string) => {
+  const handleClose = () => {
     setOpen(false);
-    setSelectedValue(value);
   };
+
+  const body = (
+    <div 
+    // style={modalStyle} className={classes.paper}
+    >
+      <h2 id="simple-modal-title">About this Visualization</h2>
+      <p>Portland, Oregon is currently regarded as one of the most liberal cities in the USA, while  Mesa, AZ is often regarded as the most conservative. This visualization is made with data from the Twitter API for trends in those two cites.</p>
+      <p>Each bar chart indicates the percentage of the trending tweets for a city for a specific trend. Subjects exclusive to Portland are on the left, and subjects exclusive to Mesa are on the right. In the center, they converge.  Where applicable, national trends are included as a benchmark.</p>
+    </div>
+  );
 
   return (
     <div>
-      <Typography variant="subtitle1">Selected: {selectedValue}</Typography>
-      <br />
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open simple dialog
-      </Button>
-      <SimpleDialog selectedValue={selectedValue} open={open} onClose={handleClose} />
+      <IconButton
+        edge="start"
+        // className={classes.menuButton}
+        color="inherit"
+        aria-label="menu"
+        onClick={handleOpen}
+      >
+        <InfoOutlinedIcon />
+      </IconButton>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        {body}
+      </Modal>
     </div>
   );
-};
+}
