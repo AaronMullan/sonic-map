@@ -1,10 +1,10 @@
 import React from 'react';
-import BarGroup from './shapes/BarGroup';
+import BarGroup from '../shapes/BarGroup';
 import { Group } from '@visx/group';
 import { AxisBottom } from '@visx/axis';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
-import {demoPercentage, TwitterPercentage, portlandData, mesaData, usaData } from './sampledata'
-import dataMunger from './dataMunger';
+import { demoPercentage, TwitterPercentage, portlandData, mesaData, usaData } from '../util/sampledata'
+import dataMunger from '../util/dataMunger';
 
 export type BarGroupProps = {
   width: number;
@@ -21,8 +21,8 @@ const white = '#F2EBE3';
 const red = '#E0635D';
 const background = '#B6B4B7';
 
-const data = dataMunger(portlandData, usaData, mesaData).slice(0,20).sort(function(a, b) {
-  return (a.partisanship - b.partisanship) 
+const data = dataMunger(portlandData, usaData, mesaData).slice(0, 20).sort(function (a, b) {
+  return (a.partisanship - b.partisanship)
 });;
 const keys = ['portlandPercentage', 'unitedstatesPercentage', 'mesaPercentage'];
 
@@ -48,7 +48,7 @@ export default function TwitterBar({
   height,
   events = false,
   margin = defaultMargin,
-}: BarGroupProps){
+}: BarGroupProps) {
 
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
@@ -82,12 +82,12 @@ export default function TwitterBar({
                     width={bar.width}
                     height={bar.height}
                     fill={bar.color}
-                    // rx={4}
-                    // onClick={() => {
-                    //   if (!events) return;
-                    //   const { key, value } = bar;
-                    //   alert(JSON.stringify({ key, value }));
-                    // }}
+                  // rx={4}
+                  // onClick={() => {
+                  //   if (!events) return;
+                  //   const { key, value } = bar;
+                  //   alert(JSON.stringify({ key, value }));
+                  // }}
                   />
                 ))}
               </Group>
@@ -98,7 +98,6 @@ export default function TwitterBar({
 
       <AxisBottom
         top={yMax + margin.top}
-        // tickFormat={formatDate}
         scale={nameScale}
         stroke={white}
         tickStroke={blue}
@@ -108,8 +107,9 @@ export default function TwitterBar({
           fill: red,
           fontSize: '1rem',
           textAnchor: 'middle',
-          scaleToFit: true,
+          
         })}
+
       />
     </svg>
   );
