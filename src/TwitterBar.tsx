@@ -3,7 +3,8 @@ import BarGroup from './shapes/BarGroup';
 import { Group } from '@visx/group';
 import { AxisBottom } from '@visx/axis';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
-import {demoPercentage, TwitterPercentage } from './sampledata'
+import {demoPercentage, TwitterPercentage, portlandData, mesaData, usaData } from './sampledata'
+import dataMunger from './dataMunger';
 
 export type BarGroupProps = {
   width: number;
@@ -15,13 +16,15 @@ const defaultMargin = { top: 40, right: 0, bottom: 40, left: 0 };
 
 const getName = (d: TwitterPercentage) => d.name;
 
-const blue = '#aeeef8';
-export const green = '#ffffff';
-const purple = '#9caff6';
-export const background = '#612efb';
+const blue = '#8AAAC3';
+const white = '#F2EBE3';
+const red = '#E0635D';
+const background = '#B6B4B7';
 
-const data = demoPercentage;
-const keys = Object.keys(data[0]).slice(2) as string[];
+const data = dataMunger(portlandData, usaData, mesaData).slice(0,20).sort(function(a, b) {
+  return (a.partisanship - b.partisanship) 
+});;
+const keys = ['portlandPercentage', 'unitedstatesPercentage', 'mesaPercentage'];
 
 const nameScale = scaleBand<string>({
   domain: data.map(getName),
@@ -32,12 +35,12 @@ const cityScale = scaleBand<string>({
   padding: 0.1,
 });
 const percentScale = scaleLinear<number>({
-  domain: [0, 1],
+  domain: [0, .13],
 });
 
 const colorScale = scaleOrdinal<string, string>({
   domain: keys,
-  range: [purple, blue, green],
+  range: [blue, white, red],
 });
 
 export default function TwitterBar({
@@ -92,17 +95,20 @@ export default function TwitterBar({
           }
         </BarGroup>
       </Group>
+
       <AxisBottom
         top={yMax + margin.top}
         // tickFormat={formatDate}
         scale={nameScale}
-        stroke={green}
-        tickStroke={green}
+        stroke={white}
+        tickStroke={blue}
+        // tickTransform={"rotate(-65)"}
         hideAxisLine
         tickLabelProps={() => ({
-          fill: green,
+          fill: red,
           fontSize: '1rem',
           textAnchor: 'middle',
+          scaleToFit: true,
         })}
       />
     </svg>
