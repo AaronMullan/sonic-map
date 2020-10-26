@@ -1,73 +1,53 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
-// import IconButton from '@material-ui/core/IconButton';
-// import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { StylesProvider } from '@material-ui/core/styles';
 import InfoDialog from './InfoDialog';
 
 const StyledButton = styled(Button)`
-  background-color: #6772e5;
-  color: #fff;
+  background-color: #8AAAC3;
+  color: #F2EBE3;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 7px 14px;
-  &:hover {
-    background-color: #5469d4;
-  }
+  text-decoration: none;
+  float: right;
+  // &:hover {
+  //   background-color: #5469d4;
+  // }
+`;
+const Title = styled.h3`
+  color: #F2EBE3;
+  flex-grow: 1;
+`;
+const StyledAppBar = styled(AppBar)`
+  background-color: #8AAAC3;
+  color: #F2EBE3;
 `;
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-    },
-    appBar: {
-      backgroundColor: "#8AAAC3",
-      color: "#F2EBE3"
-    },
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    title: {
-      flexGrow: 1,
-    },
-  }),
-);
-
-
-
-
 export default function MyCoolAppBar() {
-  const classes = useStyles();
+  // const classes = useStyles();
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const handleClick = () => {
     console.log('clicked')
     setDialogOpen(true);
   };
   return (
-    <div className={classes.root}>
-      <AppBar position="static" className={classes.appBar}>
+    <div className={"root"}>
+      <StylesProvider injectFirst>
+      <StyledAppBar position="static">
         <Toolbar>
           <InfoDialog />
-          {/* <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-            onClick={handleClick}
-            >
-            <InfoOutlinedIcon />
-          </IconButton> */}
-          
-          <Typography variant="h6" className={classes.title}>
-            Portland, OR / Mesa, AZ Twitter Trend Comparison
-          </Typography>
-          <Button color="inherit">Push Me!</Button>
+          <Title>Portland, OR / Mesa, AZ Twitter Trend Comparison</Title>
+          <StyledButton 
+          as="a" href="https://github.com/AaronMullan/twitter-viz"
+          >SOURCE</StyledButton>
         </Toolbar>
-      </AppBar>
+      </StyledAppBar>
+    </StylesProvider>
     </div>
   );
 }

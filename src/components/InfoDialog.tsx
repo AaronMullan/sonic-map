@@ -4,39 +4,12 @@ import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
-// function getModalStyle() {
-//   const top = 50;
-//   const left = 50;
-
-//   return {
-//     top: `${top}%`,
-//     left: `${left}%`,
-//     transform: `translate(-${top}%, -${left}%)`,
-//   };
-// }
-
-// const useStyles = makeStyles((theme: Theme) =>
-//   createStyles({
-//     paper: {
-//       position: 'absolute',
-//       width: 400,
-//       backgroundColor: theme.palette.background.paper,
-//       border: '2px solid #000',
-//       boxShadow: theme.shadows[5],
-//       padding: theme.spacing(2, 4, 3),
-//     },
-//   }),
-// );
-
 export default function SimpleModal() {
-  // const classes = useStyles();
-  // const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -44,6 +17,7 @@ export default function SimpleModal() {
   const body = (
     <div 
     // style={modalStyle} className={classes.paper}
+    style={{backgroundColor: "white", width: "60vw", position: "absolute", top: "3vh", left: "20vw", padding: "3%"}}
     >
       <h2 id="simple-modal-title">About this Visualization</h2>
       <p>Portland, Oregon is currently regarded as one of the most liberal cities in the USA, while  Mesa, AZ is often regarded as the most conservative. This visualization is made with data from the Twitter API for trends in those two cites.</p>

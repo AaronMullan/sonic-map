@@ -58,6 +58,7 @@ export default function TwitterBar({
   percentScale.range([yMax, 0]);
 
   return width < 10 ? null : (
+    <div style={{marginTop: "1vh"}}>
     <svg width={width} height={height}>
       <rect x={0} y={0} width={width} height={height} fill={background} rx={14} />
       <Group top={margin.top} left={margin.left}>
@@ -82,12 +83,6 @@ export default function TwitterBar({
                     width={bar.width}
                     height={bar.height}
                     fill={bar.color}
-                  // rx={4}
-                  // onClick={() => {
-                  //   if (!events) return;
-                  //   const { key, value } = bar;
-                  //   alert(JSON.stringify({ key, value }));
-                  // }}
                   />
                 ))}
               </Group>
@@ -106,11 +101,10 @@ export default function TwitterBar({
         tickLabelProps={() => ({
           fill: red,
           fontSize: '1rem',
-          textAnchor: 'middle',
-          
+          textAnchor: 'middle',  
         })}
-
       />
     </svg>
+    </div>
   );
 }
