@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -12,12 +14,15 @@
     "@types/node": "^12.12.69",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@types/styled-components": "^5.1.4",
     "@types/topojson-client": "^3.0.0",
+    "@visx/axis": "^1.1.0",
     "@visx/curve": "latest",
     "@visx/event": "latest",
     "@visx/geo": "^1.0.0",
     "@visx/gradient": "latest",
     "@visx/grid": "latest",
+    "@visx/marker": "^1.1.0",
     "@visx/mock-data": "latest",
     "@visx/responsive": "latest",
     "@visx/scale": "latest",
@@ -26,6 +31,7 @@
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-scripts": "3.4.3",
+    "styled-components": "^5.2.0",
     "topojson-client": "^3.1.0",
     "typescript": "^3.7.5"
   },
@@ -49,5 +55,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.5.0",
+    "@typescript-eslint/parser": "^4.5.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0"
   }
 }
