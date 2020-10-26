@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 import { StylesProvider } from '@material-ui/core/styles';
@@ -29,12 +27,7 @@ const StyledAppBar = styled(AppBar)`
 `;
 
 export default function MyCoolAppBar() {
-  // const classes = useStyles();
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const handleClick = () => {
-    console.log('clicked')
-    setDialogOpen(true);
-  };
+
   return (
     <div className={"root"}>
       <StylesProvider injectFirst>
