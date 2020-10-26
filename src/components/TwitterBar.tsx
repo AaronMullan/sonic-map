@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React from 'react';
 import BarGroup from '../shapes/BarGroup';
 import { Group } from '@visx/group';

@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React from 'react';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import TwitterBar from './components/TwitterBar';
