@@ -1,4 +1,6 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Portland / Mesa Twitterviz
+
+Clone the repo and npm install, you should be good to go.
 
 ## Available Scripts
 
