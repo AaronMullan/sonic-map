@@ -22,6 +22,7 @@
     "@visx/geo": "^1.0.0",
     "@visx/gradient": "latest",
     "@visx/grid": "latest",
+    "@visx/legend": "^1.1.0",
     "@visx/marker": "^1.1.0",
     "@visx/mock-data": "latest",
     "@visx/responsive": "latest",
