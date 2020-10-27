@@ -16,7 +16,6 @@ background-color: #B6B4B7;
 padding-left: 2vw;
 `
 
-
 export type BarGroupProps = {
   width: number;
   height: number;
@@ -55,6 +54,8 @@ const colorScale = scaleOrdinal<string, string>({
   range: [blue, white, red],
 });
 
+const cities = ['Portland', 'USA', 'Mesa']
+
 export default function TwitterBar({
   width,
   height,
@@ -72,7 +73,10 @@ export default function TwitterBar({
   return width < 10 ? null : (
     <>
       <div>
-        <StyledLegendOrdinal scale={colorScale} direction="column" />
+        <StyledLegendOrdinal scale={colorScale} direction="column" 
+  
+        labelFormat={label => label.slice(0,-10).charAt(0).toUpperCase() + 
+          label.slice(0,-10).slice(1)} />
       </div>
       <svg width={width} height={height} >
         <rect x={0} y={0} width={width} height={height} fill={background} rx={0} />
@@ -142,13 +146,14 @@ export default function TwitterBar({
                         fontSize={tickLabelSize}
                         textAnchor="end"
                         fill={tickColor}
-                      >
+                        >
                         {tick.formattedValue}
                       </text>
                     </Group>
                   );
                 })}
                 <text
+                href={"https://www.google.com"}
                   textAnchor="middle"
                   transform={`translate(${axisCenter}, 50)`}
                   fontSize="10"
