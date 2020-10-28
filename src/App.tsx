@@ -7,10 +7,9 @@ import MyCoolAppBar from './components/MyCoolAppBar';
 import styled from 'styled-components';
 
 const StyledParentSize = styled(ParentSize)`
-box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
 transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 margin-top: 1vh;
-border-radius: 1em;
 `
 
 function App() {
