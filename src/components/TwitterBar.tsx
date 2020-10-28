@@ -75,7 +75,8 @@ export default function TwitterBar({
       <div>
         <StyledLegendOrdinal scale={colorScale} direction="column" 
   
-        labelFormat={label => label.slice(0,-10).charAt(0).toUpperCase() + 
+        labelFormat={label => 
+          label.slice(0,-10).charAt(0).toUpperCase() + 
           label.slice(0,-10).slice(1)} />
       </div>
       <svg width={width} height={height} >
@@ -115,7 +116,6 @@ export default function TwitterBar({
           scale={nameScale}
           stroke={white}
           tickStroke={white}
-          // tickTransform={"rotate(-65)"}
           hideAxisLine
         >
           {props => {
@@ -141,19 +141,22 @@ export default function TwitterBar({
                         to={tick.to}
                         stroke={tickColor}
                       />
+                      
                       <text
                         transform={`translate(${tickX}, ${tickY}) rotate(${tickRotate})`}
                         fontSize={tickLabelSize}
                         textAnchor="end"
                         fill={tickColor}
                         >
+                          <a href={`http://twitter.com/search?q=${tick.value}`}>
                         {tick.formattedValue}
+                        </a>
                       </text>
                     </Group>
                   );
                 })}
                 <text
-                href={"https://www.google.com"}
+                
                   textAnchor="middle"
                   transform={`translate(${axisCenter}, 50)`}
                   fontSize="10"

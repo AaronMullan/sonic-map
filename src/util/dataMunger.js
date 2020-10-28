@@ -1,4 +1,3 @@
-import { portlandData, mesaData, usaData }from './sampledata';
 export default function dataMunger (portlandData, usaData, mesaData){
 
 const percentageAdder = (data) => {
