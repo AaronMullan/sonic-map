@@ -16,7 +16,6 @@ background-color: #B6B4B7;
 padding-left: 2vw;
 `
 
-
 export type BarGroupProps = {
   width: number;
   height: number;
@@ -72,7 +71,11 @@ export default function TwitterBar({
   return width < 10 ? null : (
     <>
       <div>
-        <StyledLegendOrdinal scale={colorScale} direction="column" />
+        <StyledLegendOrdinal scale={colorScale} direction="column" 
+  
+        labelFormat={label => 
+          label.slice(0,-10).charAt(0).toUpperCase() + 
+          label.slice(0,-10).slice(1)} />
       </div>
       <svg width={width} height={height} >
         <rect x={0} y={0} width={width} height={height} fill={background} rx={0} />
@@ -111,7 +114,6 @@ export default function TwitterBar({
           scale={nameScale}
           stroke={white}
           tickStroke={white}
-          // tickTransform={"rotate(-65)"}
           hideAxisLine
         >
           {props => {
@@ -137,18 +139,22 @@ export default function TwitterBar({
                         to={tick.to}
                         stroke={tickColor}
                       />
+                      
                       <text
                         transform={`translate(${tickX}, ${tickY}) rotate(${tickRotate})`}
                         fontSize={tickLabelSize}
                         textAnchor="end"
                         fill={tickColor}
-                      >
+                        >
+                          <a href={`http://twitter.com/search?q=${tick.value}`}>
                         {tick.formattedValue}
+                        </a>
                       </text>
                     </Group>
                   );
                 })}
                 <text
+                
                   textAnchor="middle"
                   transform={`translate(${axisCenter}, 50)`}
                   fontSize="10"
