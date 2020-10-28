@@ -9,6 +9,8 @@ import { LegendOrdinal } from '@visx/legend';
 import { TwitterPercentage, portlandData, mesaData, usaData } from '../util/sampledata'
 import dataMunger from '../util/dataMunger';
 import styled from 'styled-components';
+import { useTooltip, useTooltipInPortal} from '@visx/tooltip';
+import { localPoint } from '@visx/event';
 
 
 const StyledLegendOrdinal = styled(LegendOrdinal)`
@@ -61,6 +63,31 @@ export default function TwitterBar({
   margin = defaultMargin,
 }: BarGroupProps) {
 
+  const {
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+    tooltipOpen,
+    showTooltip,
+    hideTooltip,
+  } = useTooltip();
+
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({
+    // use TooltipWithBounds
+    detectBounds: true,
+    // when tooltip containers are scrolled, this will correctly update the Tooltip position
+    scroll: true,
+  })
+
+  // const handleMouseOver = (event: any, datum: any) => {
+  //   const coords = localPoint(event.target.ownerSVGElement, event);
+  //   showTooltip({
+  //     tooltipLeft: coords!.x,
+  //     tooltipTop: coords!.y,
+  //     tooltipData: datum
+  //   });
+  // };
+
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
 
@@ -77,9 +104,19 @@ export default function TwitterBar({
           label.slice(0,-10).charAt(0).toUpperCase() + 
           label.slice(0,-10).slice(1)} />
       </div>
-      <svg width={width} height={height} >
+      <svg ref={containerRef} width={width} height={height} >
         <rect x={0} y={0} width={width} height={height} fill={background} rx={0} />
-        <Group top={margin.top} left={margin.left}>
+        <Group 
+        top={margin.top} 
+        left={margin.left}>
+          onMouseOver={(event: any, datum: any) => {
+    const coords = localPoint(event.target.ownerSVGElement, event);
+    showTooltip({
+      tooltipLeft: coords!.x,
+      tooltipTop: coords!.y,
+      tooltipData: datum
+    })}}
+          onMouseOut={hideTooltip}
           <BarGroup
             data={data}
             keys={keys}
@@ -107,6 +144,16 @@ export default function TwitterBar({
               ))
             }
           </BarGroup>
+          {tooltipOpen && (
+        <TooltipInPortal
+          // set this to random so it correctly updates with parent bounds
+          key={Math.random()}
+          top={tooltipTop}
+          left={tooltipLeft}
+        >
+          Data value <strong>{tooltipData}</strong>
+        </TooltipInPortal>
+      )}
         </Group>
 
         <AxisBottom
