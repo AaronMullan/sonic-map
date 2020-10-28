@@ -54,8 +54,6 @@ const colorScale = scaleOrdinal<string, string>({
   range: [blue, white, red],
 });
 
-const cities = ['Portland', 'USA', 'Mesa']
-
 export default function TwitterBar({
   width,
   height,
