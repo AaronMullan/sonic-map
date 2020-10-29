@@ -2,6 +2,7 @@
 import React from 'react';
 import BarGroup from '../shapes/BarGroup';
 import { Group } from '@visx/group';
+import { SeriesPoint } from '@visx/shape/lib/types';
 import { AxisBottom } from '@visx/axis';
 import { Line } from '@visx/shape';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
@@ -9,15 +10,26 @@ import { LegendOrdinal } from '@visx/legend';
 import { TwitterPercentage, portlandData, mesaData, usaData } from '../util/sampledata'
 import dataMunger from '../util/dataMunger';
 import styled from 'styled-components';
-import { useTooltip, useTooltipInPortal} from '@visx/tooltip';
+import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 
+type CityName = 'portlandPercentage' | 'unitedstatesPercentage' | 'mesaPercentage';
 
 const StyledLegendOrdinal = styled(LegendOrdinal)`
 background-color: #B6B4B7;
 padding-left: 2vw;
 `
-
+type TooltipData = {
+  bar?: SeriesPoint<TwitterPercentage>;
+  key: CityName;
+  index: number;
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+  color: string;
+  value: number;
+};
 export type BarGroupProps = {
   width: number;
   height: number;
@@ -32,12 +44,19 @@ const blue = '#8AAAC3';
 const white = '#F2EBE3';
 const red = '#E0635D';
 const background = '#B6B4B7';
+const tooltipStyles = {
+  ...defaultStyles,
+  minWidth: 60,
+  backgroundColor: blue,
+  color: white,
+};
 
 const data = dataMunger(portlandData, usaData, mesaData).slice(0, 14).sort(function (a, b) {
   return (a.partisanship - b.partisanship)
 });;
-console.log(data)
-const keys = ['portlandPercentage', 'unitedstatesPercentage', 'mesaPercentage'];
+// const keys = ['portlandPercentage', 'unitedstatesPercentage', 'mesaPercentage'];
+const keys = ['portlandPercentage', 'unitedstatesPercentage', 'mesaPercentage'] as unknown as CityName[];
+
 
 const nameScale = scaleBand<string>({
   domain: data.map(getName),
@@ -51,10 +70,12 @@ const percentScale = scaleLinear<number>({
   domain: [0, Math.max(...(data.map(e => Number(e.unitedstatesPercentage))))],
 });
 
-const colorScale = scaleOrdinal<string, string>({
+const colorScale = scaleOrdinal<CityName, string>({
   domain: keys,
   range: [blue, white, red],
 });
+
+let tooltipTimeout: number;
 
 export default function TwitterBar({
   width,
@@ -70,23 +91,9 @@ export default function TwitterBar({
     tooltipOpen,
     showTooltip,
     hideTooltip,
-  } = useTooltip();
+  } = useTooltip<TooltipData>();
 
-  const { containerRef, TooltipInPortal } = useTooltipInPortal({
-    // use TooltipWithBounds
-    detectBounds: true,
-    // when tooltip containers are scrolled, this will correctly update the Tooltip position
-    scroll: true,
-  })
-
-  // const handleMouseOver = (event: any, datum: any) => {
-  //   const coords = localPoint(event.target.ownerSVGElement, event);
-  //   showTooltip({
-  //     tooltipLeft: coords!.x,
-  //     tooltipTop: coords!.y,
-  //     tooltipData: datum
-  //   });
-  // };
+  const { containerRef, TooltipInPortal } = useTooltipInPortal();
 
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
@@ -95,29 +102,23 @@ export default function TwitterBar({
   cityScale.rangeRound([0, nameScale.bandwidth()]);
   percentScale.range([yMax, 0]);
 
+  console.log(tooltipData)
+
   return width < 10 ? null : (
     <>
       <div>
-        <StyledLegendOrdinal scale={colorScale} direction="column" 
-  
-        labelFormat={label => 
-          label.slice(0,-10).charAt(0).toUpperCase() + 
-          label.slice(0,-10).slice(1)} />
+        <StyledLegendOrdinal scale={colorScale} direction="column"
+
+          labelFormat={label =>
+            label.slice(0, -10).charAt(0).toUpperCase() +
+            label.slice(0, -10).slice(1)} />
       </div>
       <svg ref={containerRef} width={width} height={height} >
         <rect x={0} y={0} width={width} height={height} fill={background} rx={0} />
-        <Group 
-        top={margin.top} 
-        left={margin.left}>
-          onMouseOver={(event: any, datum: any) => {
-    const coords = localPoint(event.target.ownerSVGElement, event);
-    showTooltip({
-      tooltipLeft: coords!.x,
-      tooltipTop: coords!.y,
-      tooltipData: datum
-    })}}
-          onMouseOut={hideTooltip}
-          <BarGroup
+        <Group
+          top={margin.top}
+          left={margin.left}>
+          <BarGroup<TwitterPercentage, CityName>
             data={data}
             keys={keys}
             height={yMax}
@@ -138,22 +139,27 @@ export default function TwitterBar({
                       width={bar.width}
                       height={bar.height}
                       fill={bar.color}
+                      onMouseLeave={() => {
+                        tooltipTimeout = window.setTimeout(() => {
+                          hideTooltip();
+                        }, 300);
+                      }}
+                      onMouseMove={event => {
+                        if (tooltipTimeout) clearTimeout(tooltipTimeout);
+                        const top = event.clientY / 1.7 -bar.height /1.5;
+                        const left = event.clientX;
+                        showTooltip({
+                          tooltipData: bar,
+                          tooltipTop: top,
+                          tooltipLeft: left,
+                        });
+                      }}
                     />
                   ))}
                 </Group>
               ))
             }
           </BarGroup>
-          {tooltipOpen && (
-        <TooltipInPortal
-          // set this to random so it correctly updates with parent bounds
-          key={Math.random()}
-          top={tooltipTop}
-          left={tooltipLeft}
-        >
-          Data value <strong>{tooltipData}</strong>
-        </TooltipInPortal>
-      )}
         </Group>
 
         <AxisBottom
@@ -186,22 +192,22 @@ export default function TwitterBar({
                         to={tick.to}
                         stroke={tickColor}
                       />
-                      
+
                       <text
                         transform={`translate(${tickX}, ${tickY}) rotate(${tickRotate})`}
                         fontSize={tickLabelSize}
                         textAnchor="end"
                         fill={tickColor}
-                        >
-                          <a href={`http://twitter.com/search?q=${tick.value}`}>
-                        {tick.formattedValue}
+                      >
+                        <a href={`http://twitter.com/search?q=${tick.value}`}>
+                          {tick.formattedValue}
                         </a>
                       </text>
                     </Group>
                   );
                 })}
                 <text
-                
+
                   textAnchor="middle"
                   transform={`translate(${axisCenter}, 50)`}
                   fontSize="10"
@@ -213,6 +219,21 @@ export default function TwitterBar({
           }}
         </AxisBottom>
       </svg>
+      {tooltipOpen && 
+      tooltipData && 
+      (
+        <TooltipInPortal
+          key={Math.random()} // update tooltip bounds each render
+          top={tooltipTop}
+          left={tooltipLeft}
+          style={tooltipStyles}
+        >
+          <p>Percentage of trending {tooltipData.key} tweets related to </p>
+       
+          <div>{(tooltipData.value * 100).toFixed(2)}%</div>
+  
+        </TooltipInPortal>
+      )}
     </>
   );
 }
