@@ -11,7 +11,6 @@ import { TwitterPercentage, portlandData, mesaData, usaData } from '../util/samp
 import dataMunger from '../util/dataMunger';
 import styled from 'styled-components';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
-import { localPoint } from '@visx/event';
 
 type CityName = 'portlandPercentage' | 'unitedstatesPercentage' | 'mesaPercentage';
 
@@ -54,9 +53,7 @@ const tooltipStyles = {
 const data = dataMunger(portlandData, usaData, mesaData).slice(0, 14).sort(function (a, b) {
   return (a.partisanship - b.partisanship)
 });;
-// const keys = ['portlandPercentage', 'unitedstatesPercentage', 'mesaPercentage'];
 const keys = ['portlandPercentage', 'unitedstatesPercentage', 'mesaPercentage'] as unknown as CityName[];
-
 
 const nameScale = scaleBand<string>({
   domain: data.map(getName),
@@ -94,15 +91,12 @@ export default function TwitterBar({
   } = useTooltip<TooltipData>();
 
   const { containerRef, TooltipInPortal } = useTooltipInPortal();
-
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
 
   nameScale.rangeRound([0, xMax]);
   cityScale.rangeRound([0, nameScale.bandwidth()]);
   percentScale.range([yMax, 0]);
-
-  console.log(tooltipData)
 
   return width < 10 ? null : (
     <>
@@ -229,9 +223,7 @@ export default function TwitterBar({
           style={tooltipStyles}
         >
           <p>Percentage of trending {tooltipData.key} tweets related to </p>
-       
           <div>{(tooltipData.value * 100).toFixed(2)}%</div>
-  
         </TooltipInPortal>
       )}
     </>
