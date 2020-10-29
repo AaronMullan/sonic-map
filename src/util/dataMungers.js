@@ -31,9 +31,11 @@ const trendsLocationAdder = (d) => {
 
 const trendyLocations = (trendsLocationAdder(trendSet)).filter(e => e[0]);
 
+
 const flatLocations = trendyLocations.map(e => 
   Object.assign(e[0], e[1], e[2]));
-
+  
+  console.log(flatLocations)
 flatLocations.forEach(e =>{
   if(!e.portlandPercentage) e.portlandPercentage = 0;
   if(!e.unitedstatesPercentage) e.unitedstatesPercentage = 0;

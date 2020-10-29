@@ -7,7 +7,8 @@ import { AxisBottom } from '@visx/axis';
 import { Line } from '@visx/shape';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { LegendOrdinal } from '@visx/legend';
-import { TwitterPercentage, portlandData, mesaData, usaData } from '../util/sampledata'
+import { portlandData, mesaData, usaData } from '../util/sampledata'
+import { APIObject, APIData } from '../types/data'
 import dataMunger from '../util/dataMunger';
 import styled from 'styled-components';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
@@ -19,7 +20,7 @@ background-color: #B6B4B7;
 padding-left: 2vw;
 `
 type TooltipData = {
-  bar?: SeriesPoint<TwitterPercentage>;
+  bar?: SeriesPoint<APIObject>;
   key: CityName;
   index: number;
   height: number;
@@ -37,7 +38,7 @@ export type BarGroupProps = {
 };
 const defaultMargin = { top: 40, right: 0, bottom: 200, left: 0 };
 
-const getName = (d: TwitterPercentage) => d.name;
+const getName = (d: APIObject) => d.name;
 
 const blue = '#8AAAC3';
 const white = '#F2EBE3';
@@ -64,7 +65,7 @@ const cityScale = scaleBand<string>({
   padding: 0.1,
 });
 const percentScale = scaleLinear<number>({
-  domain: [0, Math.max(...(data.map(e => Number(e.unitedstatesPercentage))))],
+  domain: [0, Math.max(...(data.map(e => Number(e.USAPercentage))))],
 });
 
 const colorScale = scaleOrdinal<CityName, string>({
@@ -112,7 +113,7 @@ export default function TwitterBar({
         <Group
           top={margin.top}
           left={margin.left}>
-          <BarGroup<TwitterPercentage, CityName>
+          <BarGroup<APIObject, CityName>
             data={data}
             keys={keys}
             height={yMax}
