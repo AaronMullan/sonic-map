@@ -52,9 +52,8 @@ const tooltipStyles = {
 };
 
 const data = dataMunger(portlandData, usaData, mesaData)
-
   .slice(0, 14)
-// .sort(function (a, b) {return (a.partisanship - b.partisanship)});
+  .sort(function (a, b) { return (a.partisanship - b.partisanship) });
 
 const keys = ['cityAPercentage', 'USAPercentage', 'cityBPercentage'] as unknown as CityName[];
 
@@ -105,14 +104,14 @@ export default function TwitterBar({
     <>
       <div>
         <StyledLegendOrdinal scale={colorScale} direction="column"
-         style={{ color: white}}
-          labelFormat={(d, i) => 
-            {switch(true){
+          style={{ color: white }}
+          labelFormat={(d, i) => {
+            switch (true) {
               case i === 0: return 'Portland';
               case i === 1: return 'USA';
               case i === 2: return 'Mesa';
             }
-        }}
+          }}
         />
       </div>
       <svg ref={containerRef} width={width} height={height} >
@@ -183,7 +182,6 @@ export default function TwitterBar({
                   const tickX = tick.to.x;
                   const tickY =
                     tick.to.y + tickLabelSize;
-                  // props.tickLength;
                   return (
                     <Group
                       key={`vx-tick-${tick.value}-${i}`}
@@ -229,8 +227,8 @@ export default function TwitterBar({
             left={tooltipLeft}
             style={tooltipStyles}
           >
-            <p>Percentage of trending<br/> 
-            {tooltipData.key} tweets: </p>
+            <p>Percentage of trending<br />
+              {tooltipData.key} tweets: </p>
             <div>{(tooltipData.value * 100).toFixed(2)}%</div>
           </TooltipInPortal>
         )}

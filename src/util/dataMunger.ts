@@ -7,10 +7,10 @@ export default function dataMunger(cityAData: RawAPIData, usaData: RawAPIData, c
     const location = data[0].locations[0].name.replace(/ /g, '').toLowerCase();
     const totals = trends.reduce((acc, current) => acc + current.tweet_volume, 0);
     const trendsWithBenefits: APIObject[] = []
-    
+
     trends.forEach(e => trendsWithBenefits.push(e as unknown as APIObject))
-   
     trendsWithBenefits.forEach(e => e.location = location)
+
     switch (true) {
       case index === 0:
         trendsWithBenefits.forEach(
@@ -37,10 +37,9 @@ export default function dataMunger(cityAData: RawAPIData, usaData: RawAPIData, c
 
   const totalCityATrends = percentageAdder(cityAData, 0)
     .sort((a, b) => b.cityAPercentage - a.cityAPercentage);
-    
   const totalUsaTrends = percentageAdder(usaData, 1);
   const totalCityBTrends = percentageAdder(cityBData, 2)
-  // .sort(function (a, b) { return (b.cityBPercentage - a.cityBPercentage) });
+    .sort((a, b) => b.cityBPercentage - a.cityBPercentage);
 
 
   const totalTrends = [...totalCityATrends, ...totalUsaTrends, ...totalCityBTrends];
@@ -59,7 +58,6 @@ export default function dataMunger(cityAData: RawAPIData, usaData: RawAPIData, c
 
   const flatLocations: APIObject[] = trendyLocations.map((e) =>
     Object.assign(e[0], e[1], e[2]));
-
   flatLocations.forEach(e => {
     if (!e.cityAPercentage) e.cityAPercentage = 0;
     if (!e.USAPercentage) e.USAPercentage = 0;
@@ -68,7 +66,7 @@ export default function dataMunger(cityAData: RawAPIData, usaData: RawAPIData, c
   });
 
   const completeLocations: APIObject[] = flatLocations
-  // .sort(function (a, b) { return (a.partisanship - b.partisanship) });
+    .sort((a, b) => a.partisanship - b.partisanship);
 
   const extremeFinder = (arr: APIObject[]) => {
     let output: APIObject[] = [];
