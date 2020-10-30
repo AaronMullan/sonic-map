@@ -145,8 +145,7 @@ export default function TwitterBar({
             const tickLabelSize = 12;
             const tickRotate = -45;
             const tickColor = white;
-            const axisCenter =
-              (props.axisToPoint.x - props.axisFromPoint.x);
+          
             return (
               <g className="my-custom-bottom-axis">
                 {props.ticks.map((tick, i) => {
