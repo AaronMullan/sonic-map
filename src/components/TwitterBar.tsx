@@ -3,7 +3,7 @@ import React from 'react';
 import BarGroup from '../shapes/BarGroup';
 import { Group } from '@visx/group';
 import { SeriesPoint } from '@visx/shape/lib/types';
-import { AxisBottom } from '@visx/axis';
+import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Line } from '@visx/shape';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { LegendOrdinal } from '@visx/legend';
@@ -14,10 +14,22 @@ import styled from 'styled-components';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 
 type CityName = 'cityAPercentage' | 'USAPercentage' | 'cityBPercentage';
+const blue = '#8AAAC3';
+const white = '#F2EBE3';
+const red = '#E0635D';
+const background = '#B6B4B7';
+const tooltipStyles = {
+  ...defaultStyles,
+  minWidth: 60,
+  backgroundColor: blue,
+  color: white,
+};
 
 const StyledLegendOrdinal = styled(LegendOrdinal)`
 background-color: #B6B4B7;
-padding-left: 2vw;
+color: white;
+padding-left: 6vw;
+padding-top: 1vh;
 `
 type TooltipData = {
   bar?: SeriesPoint<APIObject>;
@@ -36,20 +48,9 @@ export type BarGroupProps = {
   margin?: { top: number; right: number; bottom: number; left: number };
   events?: boolean;
 };
-const defaultMargin = { top: 40, right: 0, bottom: 200, left: 0 };
+const defaultMargin = { top: 40, right: 10, bottom: 120, left: 60 };
 
 const getName = (d: APIObject) => d.name;
-
-const blue = '#8AAAC3';
-const white = '#F2EBE3';
-const red = '#E0635D';
-const background = '#B6B4B7';
-const tooltipStyles = {
-  ...defaultStyles,
-  minWidth: 60,
-  backgroundColor: blue,
-  color: white,
-};
 
 const data = dataMunger(portlandData, usaData, mesaData)
   .slice(0, 14)
@@ -104,7 +105,7 @@ export default function TwitterBar({
     <>
       <div>
         <StyledLegendOrdinal scale={colorScale} direction="column"
-          style={{ color: white }}
+          // style={{ color: white, paddingLeft: '20px', paddingTop: '20px'  }}
           labelFormat={(d, i) => {
             switch (true) {
               case i === 0: return 'Portland';
@@ -116,9 +117,84 @@ export default function TwitterBar({
       </div>
       <svg ref={containerRef} width={width} height={height} >
         <rect x={0} y={0} width={width} height={height} fill={background} rx={0} />
+       
+        <AxisLeft
+          top={margin.top} 
+          scale={percentScale} 
+          label={"Percentage of Tweets"} 
+          left={60}
+          hideAxisLine
+          tickStroke={white}
+          stroke={white}
+          tickLength={4}
+          labelProps={{
+            fontSize:  14,
+            fill: white
+          }}
+        />
+        <AxisBottom
+          top={yMax + margin.top}
+          left={margin.left}
+          scale={nameScale}
+          stroke={white}
+          tickStroke={white}
+          hideAxisLine
+          label={ 'Trending Tweets'}
+        >
+          {props => {
+            const tickLabelSize = 12;
+            const tickRotate = -45;
+            const tickColor = white;
+          
+            return (
+              <g className="my-custom-bottom-axis">
+                {props.ticks.map((tick, i) => {
+                  const tickX = tick.to.x;
+                  const tickY =
+                    tick.to.y + tickLabelSize;
+                  return (
+                    <>
+                      <Group
+                        key={`vx-tick-${tick.value}-${i}`}
+                        className={'vx-axis-tick'}
+                        // style={{ marginLeft: '100px'}}
+                      >
+                        <Line
+                          from={tick.from}
+                          to={tick.to}
+                          stroke={tickColor}
+                        />
+
+                        <text
+                          transform={`translate(${tickX}, ${tickY}) rotate(${tickRotate})`}
+                          fontSize={tickLabelSize}
+                          textAnchor="end"
+                          fill={tickColor}
+                        >
+                          <a href={`http://twitter.com/search?q=${tick.value}`}>
+                            {tick.formattedValue}
+                          </a>
+                        </text>
+                      </Group>
+                    </>
+                  );
+                })}
+                {/* <text
+                  textAnchor="middle"
+                  transform={`translate(${axisCenter}, 50)`}
+                  fontSize="10"
+                >
+                  {props.label}
+                </text> */}
+              </g>
+            );
+          }}
+        </AxisBottom>
         <Group
           top={margin.top}
           left={margin.left}>
+          
+          
           <BarGroup<APIObject, CityName>
             data={data}
             keys={keys}
@@ -147,7 +223,7 @@ export default function TwitterBar({
                       }}
                       onMouseMove={event => {
                         if (tooltipTimeout) clearTimeout(tooltipTimeout);
-                        const top = event.clientY / 1.7 - bar.height / 1.5;
+                        const top = event.clientY - 200;
                         const left = event.clientX;
                         showTooltip({
                           tooltipData: bar,
@@ -161,62 +237,11 @@ export default function TwitterBar({
               ))
             }
           </BarGroup>
+          
         </Group>
 
-        <AxisBottom
-          top={yMax + margin.top}
-          scale={nameScale}
-          stroke={white}
-          tickStroke={white}
-          hideAxisLine
-        >
-          {props => {
-            const tickLabelSize = 10;
-            const tickRotate = -75;
-            const tickColor = white;
-            const axisCenter =
-              (props.axisToPoint.x - props.axisFromPoint.x) / 2;
-            return (
-              <g className="my-custom-bottom-axis">
-                {props.ticks.map((tick, i) => {
-                  const tickX = tick.to.x;
-                  const tickY =
-                    tick.to.y + tickLabelSize;
-                  return (
-                    <Group
-                      key={`vx-tick-${tick.value}-${i}`}
-                      className={'vx-axis-tick'}
-                    >
-                      <Line
-                        from={tick.from}
-                        to={tick.to}
-                        stroke={tickColor}
-                      />
-
-                      <text
-                        transform={`translate(${tickX}, ${tickY}) rotate(${tickRotate})`}
-                        fontSize={tickLabelSize}
-                        textAnchor="end"
-                        fill={tickColor}
-                      >
-                        <a href={`http://twitter.com/search?q=${tick.value}`}>
-                          {tick.formattedValue}
-                        </a>
-                      </text>
-                    </Group>
-                  );
-                })}
-                <text
-                  textAnchor="middle"
-                  transform={`translate(${axisCenter}, 50)`}
-                  fontSize="10"
-                >
-                  {props.label}
-                </text>
-              </g>
-            );
-          }}
-        </AxisBottom>
+      
+        
       </svg>
       {tooltipOpen &&
         tooltipData &&
@@ -227,8 +252,6 @@ export default function TwitterBar({
             left={tooltipLeft}
             style={tooltipStyles}
           >
-            <p>Percentage of trending<br />
-              {tooltipData.key} tweets: </p>
             <div>{(tooltipData.value * 100).toFixed(2)}%</div>
           </TooltipInPortal>
         )}
