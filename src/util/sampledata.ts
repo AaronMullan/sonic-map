@@ -1,4 +1,4 @@
-import { APIData } from '../types/data'
+import { RawAPIData, APIData } from '../types/data'
 
 // export interface TwitterPercentage {
 //     name: string,
@@ -503,7 +503,7 @@ import { APIData } from '../types/data'
 //     partisanship: 9.970879134712016
 // }];
 
-export const portlandData: APIData = [
+export const portlandData: RawAPIData = [
     {
         "trends": [
             {
@@ -860,7 +860,7 @@ export const portlandData: APIData = [
         ]
     }
 ]
-export const mesaData: APIData = [
+export const mesaData: RawAPIData = [
     {
         "trends": [
             {
@@ -1217,7 +1217,7 @@ export const mesaData: APIData = [
         ]
     }
 ]
-export const usaData: APIData = [
+export const usaData: RawAPIData = [
     {
         "trends": [
             {

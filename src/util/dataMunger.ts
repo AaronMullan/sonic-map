@@ -1,12 +1,15 @@
-import { APIObject, APIData } from '../types/data'
+import { APIData, APIObject, RawAPIData } from '../types/data'
 
-export default function dataMunger(cityAData: APIData, usaData: APIData, cityBData: APIData) {
+export default function dataMunger(cityAData: RawAPIData, usaData: RawAPIData, cityBData: RawAPIData) {
 
-  const percentageAdder = (data: APIData, index: number) => {
+  const percentageAdder = (data: RawAPIData, index: number): APIObject => {
     const trends = data[0].trends;
     const location = data[0].locations[0].name.replace(/ /g, '').toLowerCase();
     const totals = trends.reduce((acc, current) => acc + current.tweet_volume, 0);
-    const trendsWithBenefits = data[0].trends;
+    const trendsWithBenefits: APIObject[] = []
+    
+    trends.forEach(e => trendsWithBenefits.push(e as unknown as APIObject))
+   
     trendsWithBenefits.forEach(e => e.location = location)
     switch (true) {
       case index === 0:
@@ -33,7 +36,8 @@ export default function dataMunger(cityAData: APIData, usaData: APIData, cityBDa
   }
 
   const totalCityATrends = percentageAdder(cityAData, 0)
-  // .sort(function (a, b) { return (b.cityAPercentage - a.cityAPercentage)});
+    .sort((a, b) => b.cityAPercentage - a.cityAPercentage);
+    
   const totalUsaTrends = percentageAdder(usaData, 1);
   const totalCityBTrends = percentageAdder(cityBData, 2)
   // .sort(function (a, b) { return (b.cityBPercentage - a.cityBPercentage) });
