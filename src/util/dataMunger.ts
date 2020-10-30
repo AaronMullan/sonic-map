@@ -1,8 +1,8 @@
-import { APIData, APIObject, RawAPIData } from '../types/data'
+import { APIObject, RawAPIData } from '../types/data'
 
 export default function dataMunger(cityAData: RawAPIData, usaData: RawAPIData, cityBData: RawAPIData) {
 
-  const percentageAdder = (data: RawAPIData, index: number): APIObject => {
+  const percentageAdder = (data: RawAPIData, index: number): APIObject[] => {
     const trends = data[0].trends;
     const location = data[0].locations[0].name.replace(/ /g, '').toLowerCase();
     const totals = trends.reduce((acc, current) => acc + current.tweet_volume, 0);

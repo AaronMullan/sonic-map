@@ -1,4 +1,4 @@
-import { RawAPIData, APIData } from '../types/data'
+import { RawAPIData } from '../types/data'
 
 // export interface TwitterPercentage {
 //     name: string,
