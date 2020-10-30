@@ -7,31 +7,36 @@ export default function dataMunger(cityAData: APIData, usaData: APIData, cityBDa
     const location = data[0].locations[0].name.replace(/ /g, '').toLowerCase();
     const totals = trends.reduce((acc, current) => acc + current.tweet_volume, 0);
     const trendsWithBenefits = data[0].trends;
-
+    trendsWithBenefits.forEach(e => e.location = location)
     switch (true) {
       case index === 0:
         trendsWithBenefits.forEach(
           e => e.cityATweetVolume = e.tweet_volume > 0 ? e.tweet_volume : 0);
         trendsWithBenefits.forEach(
           e => e.cityAPercentage = e.tweet_volume > 0 ? e.tweet_volume / totals : 0);
+        break;
       case index === 1:
         trendsWithBenefits.forEach(
           e => e.USATweetVolume = e.tweet_volume > 0 ? e.tweet_volume : 0);
         trendsWithBenefits.forEach(
           e => e.USAPercentage = e.tweet_volume > 0 ? e.tweet_volume / totals : 0);
+        break;
       case index === 2:
         trendsWithBenefits.forEach(
           e => e.cityBTweetVolume = e.tweet_volume > 0 ? e.tweet_volume : 0);
-          trendsWithBenefits.forEach(
-            e => e.cityBPercentage = e.tweet_volume > 0 ? e.tweet_volume / totals : 0);
+        trendsWithBenefits.forEach(
+          e => e.cityBPercentage = e.tweet_volume > 0 ? e.tweet_volume / totals : 0);
+        break;
     }
 
     return trendsWithBenefits;
   }
 
-  const totalCityATrends = percentageAdder(cityAData, 0).sort(function (a, b) { return (b.cityAPercentage - a.cityAPercentage) });
+  const totalCityATrends = percentageAdder(cityAData, 0)
+  // .sort(function (a, b) { return (b.cityAPercentage - a.cityAPercentage)});
   const totalUsaTrends = percentageAdder(usaData, 1);
-  const totalCityBTrends = percentageAdder(cityBData, 2).sort(function (a, b) { return (b.cityBPercentage - a.cityBPercentage) });
+  const totalCityBTrends = percentageAdder(cityBData, 2)
+  // .sort(function (a, b) { return (b.cityBPercentage - a.cityBPercentage) });
 
 
   const totalTrends = [...totalCityATrends, ...totalUsaTrends, ...totalCityBTrends];
@@ -58,7 +63,8 @@ export default function dataMunger(cityAData: APIData, usaData: APIData, cityBDa
     e.partisanship = (e.cityBPercentage / e.cityAPercentage) * 10;
   });
 
-  const completeLocations: APIObject[] = flatLocations.sort(function (a, b) { return (a.partisanship - b.partisanship) });
+  const completeLocations: APIObject[] = flatLocations
+  // .sort(function (a, b) { return (a.partisanship - b.partisanship) });
 
   const extremeFinder = (arr: APIObject[]) => {
     let output: APIObject[] = [];

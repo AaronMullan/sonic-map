@@ -8,12 +8,12 @@ import { Line } from '@visx/shape';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { LegendOrdinal } from '@visx/legend';
 import { portlandData, mesaData, usaData } from '../util/sampledata'
-import { APIObject, APIData } from '../types/data'
+import { APIObject } from '../types/data'
 import dataMunger from '../util/dataMunger';
 import styled from 'styled-components';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 
-type CityName = 'portlandPercentage' | 'unitedstatesPercentage' | 'mesaPercentage';
+type CityName = 'cityAPercentage' | 'USAPercentage' | 'cityBPercentage';
 
 const StyledLegendOrdinal = styled(LegendOrdinal)`
 background-color: #B6B4B7;
@@ -51,10 +51,12 @@ const tooltipStyles = {
   color: white,
 };
 
-const data = dataMunger(portlandData, usaData, mesaData).slice(0, 14).sort(function (a, b) {
-  return (a.partisanship - b.partisanship)
-});;
-const keys = ['portlandPercentage', 'unitedstatesPercentage', 'mesaPercentage'] as unknown as CityName[];
+const data = dataMunger(portlandData, usaData, mesaData)
+
+  .slice(0, 14)
+// .sort(function (a, b) {return (a.partisanship - b.partisanship)});
+
+const keys = ['cityAPercentage', 'USAPercentage', 'cityBPercentage'] as unknown as CityName[];
 
 const nameScale = scaleBand<string>({
   domain: data.map(getName),
@@ -78,7 +80,7 @@ let tooltipTimeout: number;
 export default function TwitterBar({
   width,
   height,
-  events = false,
+  // events = false,
   margin = defaultMargin,
 }: BarGroupProps) {
 
@@ -103,10 +105,15 @@ export default function TwitterBar({
     <>
       <div>
         <StyledLegendOrdinal scale={colorScale} direction="column"
-
-          labelFormat={label =>
-            label.slice(0, -10).charAt(0).toUpperCase() +
-            label.slice(0, -10).slice(1)} />
+         style={{ color: white}}
+          labelFormat={(d, i) => 
+            {switch(true){
+              case i === 0: return 'Portland';
+              case i === 1: return 'USA';
+              case i === 2: return 'Mesa';
+            }
+        }}
+        />
       </div>
       <svg ref={containerRef} width={width} height={height} >
         <rect x={0} y={0} width={width} height={height} fill={background} rx={0} />
@@ -141,7 +148,7 @@ export default function TwitterBar({
                       }}
                       onMouseMove={event => {
                         if (tooltipTimeout) clearTimeout(tooltipTimeout);
-                        const top = event.clientY / 1.7 -bar.height /1.5;
+                        const top = event.clientY / 1.7 - bar.height / 1.5;
                         const left = event.clientX;
                         showTooltip({
                           tooltipData: bar,
@@ -166,7 +173,7 @@ export default function TwitterBar({
         >
           {props => {
             const tickLabelSize = 10;
-            const tickRotate = -65;
+            const tickRotate = -75;
             const tickColor = white;
             const axisCenter =
               (props.axisToPoint.x - props.axisFromPoint.x) / 2;
@@ -202,7 +209,6 @@ export default function TwitterBar({
                   );
                 })}
                 <text
-
                   textAnchor="middle"
                   transform={`translate(${axisCenter}, 50)`}
                   fontSize="10"
@@ -214,19 +220,20 @@ export default function TwitterBar({
           }}
         </AxisBottom>
       </svg>
-      {tooltipOpen && 
-      tooltipData && 
-      (
-        <TooltipInPortal
-          key={Math.random()} // update tooltip bounds each render
-          top={tooltipTop}
-          left={tooltipLeft}
-          style={tooltipStyles}
-        >
-          <p>Percentage of trending {tooltipData.key} tweets related to </p>
-          <div>{(tooltipData.value * 100).toFixed(2)}%</div>
-        </TooltipInPortal>
-      )}
+      {tooltipOpen &&
+        tooltipData &&
+        (
+          <TooltipInPortal
+            key={Math.random()} // update tooltip bounds each render
+            top={tooltipTop}
+            left={tooltipLeft}
+            style={tooltipStyles}
+          >
+            <p>Percentage of trending<br/> 
+            {tooltipData.key} tweets: </p>
+            <div>{(tooltipData.value * 100).toFixed(2)}%</div>
+          </TooltipInPortal>
+        )}
     </>
   );
 }
