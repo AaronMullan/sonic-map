@@ -20,6 +20,7 @@ const StyledButton = styled(Button)`
 `;
 const Title = styled.h3`
   color: #F2EBE3;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .3);
   flex-grow: 1;
 `;
 const StyledAppBar = styled(AppBar)`

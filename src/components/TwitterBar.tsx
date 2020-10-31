@@ -18,16 +18,17 @@ const blue = '#8AAAC3';
 const white = '#F2EBE3';
 const red = '#E0635D';
 const background = '#B6B4B7';
+const dark = '#212B30'
 const tooltipStyles = {
   ...defaultStyles,
   minWidth: 60,
   backgroundColor: blue,
-  color: white,
+  color: dark,
 };
 
 const StyledLegendOrdinal = styled(LegendOrdinal)`
 background-color: #B6B4B7;
-color: white;
+color: ${dark};
 padding-left: 6vw;
 padding-top: 1vh;
 `
@@ -124,27 +125,27 @@ export default function TwitterBar({
           label={"Percentage of Tweets"} 
           left={60}
           hideAxisLine
-          tickStroke={white}
-          stroke={white}
+          tickStroke={dark}
+          stroke={dark}
           tickLength={4}
           labelProps={{
             fontSize:  14,
-            fill: white
+            fill: dark
           }}
         />
         <AxisBottom
           top={yMax + margin.top}
           left={margin.left}
           scale={nameScale}
-          stroke={white}
-          tickStroke={white}
+          stroke={dark}
+          tickStroke={dark}
           hideAxisLine
           label={ 'Trending Tweets'}
         >
           {props => {
             const tickLabelSize = 12;
             const tickRotate = -45;
-            const tickColor = white;
+            const tickColor = dark;
           
             return (
               <g className="my-custom-bottom-axis">
