@@ -7,8 +7,8 @@ import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Line } from '@visx/shape';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { LegendOrdinal } from '@visx/legend';
-import { portlandData, mesaData, usaData } from '../util/sampledata'
-import { APIObject } from '../types/data'
+import { APIObject, RawAPIData } from '../types/data'
+
 import dataMunger from '../util/dataMunger';
 import styled from 'styled-components';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
@@ -48,28 +48,19 @@ export type BarGroupProps = {
   height: number;
   margin?: { top: number; right: number; bottom: number; left: number };
   events?: boolean;
+  cityAData: RawAPIData;
+  USAData: RawAPIData;
+  cityBData: RawAPIData;
 };
 const defaultMargin = { top: 40, right: 10, bottom: 120, left: 60 };
 
 const getName = (d: APIObject) => d.name;
 
-const data = dataMunger(portlandData, usaData, mesaData)
-  .slice(0, 14)
-  .sort(function (a, b) { return (a.partisanship - b.partisanship) });
+
 
 const keys = ['cityAPercentage', 'USAPercentage', 'cityBPercentage'] as unknown as CityName[];
 
-const nameScale = scaleBand<string>({
-  domain: data.map(getName),
-  padding: 0.2
-})
-const cityScale = scaleBand<string>({
-  domain: keys,
-  padding: 0.1,
-});
-const percentScale = scaleLinear<number>({
-  domain: [0, Math.max(...(data.map(e => Number(e.USAPercentage))))],
-});
+
 
 const colorScale = scaleOrdinal<CityName, string>({
   domain: keys,
@@ -83,7 +74,27 @@ export default function TwitterBar({
   height,
   // events = false,
   margin = defaultMargin,
+  cityAData,
+  USAData,
+  cityBData,
 }: BarGroupProps) {
+
+  const data = dataMunger(cityAData, USAData, cityBData)
+    .slice(0, 14)
+    .sort(function (a, b) { return (a.partisanship - b.partisanship) });
+
+
+  const nameScale = scaleBand<string>({
+    domain: data.map(getName),
+    padding: 0.2
+  })
+  const cityScale = scaleBand<string>({
+    domain: keys,
+    padding: 0.1,
+  });
+  const percentScale = scaleLinear<number>({
+    domain: [0, Math.max(...(data.map(e => Number(e.USAPercentage))))],
+  });
 
   const {
     tooltipData,
@@ -118,18 +129,18 @@ export default function TwitterBar({
       </div>
       <svg ref={containerRef} width={width} height={height} >
         <rect x={0} y={0} width={width} height={height} fill={background} rx={0} />
-       
+
         <AxisLeft
-          top={margin.top} 
-          scale={percentScale} 
-          label={"Percentage of Tweets"} 
+          top={margin.top}
+          scale={percentScale}
+          label={"Percentage of Tweets"}
           left={60}
           hideAxisLine
           tickStroke={dark}
           stroke={dark}
           tickLength={4}
           labelProps={{
-            fontSize:  14,
+            fontSize: 14,
             fill: dark
           }}
         />
@@ -140,13 +151,13 @@ export default function TwitterBar({
           stroke={dark}
           tickStroke={dark}
           hideAxisLine
-          label={ 'Trending Tweets'}
+          label={'Trending Tweets'}
         >
           {props => {
             const tickLabelSize = 12;
             const tickRotate = -45;
             const tickColor = dark;
-          
+
             return (
               <g className="my-custom-bottom-axis">
                 {props.ticks.map((tick, i) => {
@@ -158,7 +169,7 @@ export default function TwitterBar({
                       <Group
                         key={`vx-tick-${tick.value}-${i}`}
                         className={'vx-axis-tick'}
-                        // style={{ marginLeft: '100px'}}
+                      // style={{ marginLeft: '100px'}}
                       >
                         <Line
                           from={tick.from}
@@ -194,8 +205,8 @@ export default function TwitterBar({
         <Group
           top={margin.top}
           left={margin.left}>
-          
-          
+
+
           <BarGroup<APIObject, CityName>
             data={data}
             keys={keys}
@@ -238,11 +249,11 @@ export default function TwitterBar({
               ))
             }
           </BarGroup>
-          
+
         </Group>
 
-      
-        
+
+
       </svg>
       {tooltipOpen &&
         tooltipData &&
