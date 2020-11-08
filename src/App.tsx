@@ -22,7 +22,7 @@ function App() {
 
   useEffect(() => {
     const myHeaders = new Headers();
-  myHeaders.append("Authorization", process.env.REACT_APP_TOKEN as string);
+    myHeaders.append("Authorization", process.env.REACT_APP_TOKEN as string);
 
     const requestOptions: object = {
       method: 'GET',
@@ -30,22 +30,30 @@ function App() {
       headers: myHeaders,
       redirect: 'follow'
     };
+    let portland: RawAPIData = portlandData;
+    let us: RawAPIData = usaData;
+    let mesa: RawAPIData = mesaData;
 
+    Promise.all([
+  
     fetch("https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/trends/place.json?id=2475687", requestOptions)
     .then(response => response.json())
-    .then(result => setLivePortlandData(result))
-    .catch(error => console.log('error', error));
+    .then(result => portland = result)
+    .catch(error => console.log('error', error)),
 
     fetch("https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/trends/place.json?id=23424977", requestOptions)
     .then(response => response.json())
-    // .then(results => console.log(results))
-    .then(result => setLiveUSAData(result))
-    .catch(error => console.log('error', error));
+    .then(result => us = result)
+    .catch(error => console.log('error', error)),
 
     fetch("https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/trends/place.json?id=2449808", requestOptions)
     .then(response => response.json())
-    .then(result => setLiveMesaData(result))
-    .catch(error => console.log('error', error));
+    .then(result => mesa = result)
+    .catch(error => console.log('error', error))
+  ])
+    .then(() => setLivePortlandData(livePortlandData => portland))
+    .then(() => setLiveUSAData(liveUSAData => us))
+    .then(() => setLiveMesaData(liveMesaData => mesa))
   }, [])
 
   return (
